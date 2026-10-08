@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class EnemyVision : MonoBehaviour
@@ -6,9 +5,12 @@ public class EnemyVision : MonoBehaviour
     public Transform player;
     public float viewDistance = 10f;
     public float viewAngle = 90f;
+    public float timeToDetect = 1.5f;
+    public float timeToForget = 3f;
     public Color normalColor = Color.green;
     public Color alertColor = Color.red;
     private Renderer rend;
+    private float detection;
 
     void Start()
     {
@@ -17,8 +19,17 @@ public class EnemyVision : MonoBehaviour
 
     void Update()
     {
-        bool seen = CanSeePlayer();
-        rend.material.color = seen ? alertColor : normalColor;
+        if (CanSeePlayer())
+        {
+            detection += Time.deltaTime / timeToDetect;
+        }
+        else
+        {
+            detection -= Time.deltaTime / timeToForget;
+        }
+
+        detection = Mathf.Clamp01(detection);
+        rend.material.color = Color.Lerp(normalColor, alertColor, detection);
     }
 
     bool CanSeePlayer()
