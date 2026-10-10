@@ -10,11 +10,13 @@ public class EnemyVision : MonoBehaviour
     public Color normalColor = Color.green;
     public Color alertColor = Color.red;
     private Renderer rend;
+    private PlayerRespawn playerRespawn;
     private float detection;
 
     void Start()
     {
         rend = GetComponent<Renderer>();
+        playerRespawn = player.GetComponent<PlayerRespawn>();
     }
 
     void Update()
@@ -30,6 +32,12 @@ public class EnemyVision : MonoBehaviour
 
         detection = Mathf.Clamp01(detection);
         rend.material.color = Color.Lerp(normalColor, alertColor, detection);
+
+        if (detection >= 1f)
+        {
+            playerRespawn.Respawn();
+            detection = 0f;
+        }
     }
 
     bool CanSeePlayer()
